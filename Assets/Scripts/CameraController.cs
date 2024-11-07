@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     [Space(10)]
     public float rotationSpeed = 2f;
     public float distance = 5;
-    public float minVerticalAngle = -20f;
+    public float minVerticalAngle = -10f;
     public float maxVerticalAngle = 45f;
     public Vector2 framingOffset;
 
@@ -56,6 +56,6 @@ public class CameraController : MonoBehaviour
         transform.SetPositionAndRotation(focusPosition - targetRotation * new Vector3(0, 0, distance), targetRotation);
     }
 
-    //
+    // Returns the rotation around the Y-axis (ignores vertical rotation).
     public Quaternion PlanarRotation => Quaternion.Euler(0, rotationY, 0);
 }

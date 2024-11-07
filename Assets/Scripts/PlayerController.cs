@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     // Camera controller reference.
     [Space(10)]
     public CameraController cameraController;
+    public Animator animator;
 
     // Movement and rotation settings.
     [Space(10)]
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour
         float vertical = Input.GetAxis("Vertical");
 
         // Calculate movement magnitude.
-        float moveAmount = Math.Abs(horizontal) + Math.Abs(vertical);
+        float moveAmount = Mathf.Clamp01(Math.Abs(horizontal) + Math.Abs(vertical));
 
         // Create normalized movement vector.
         var moveInput = (new Vector3(horizontal, 0, vertical)).normalized;
@@ -42,5 +43,8 @@ public class PlayerController : MonoBehaviour
 
         // Smooth rotation to target.
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        // Update animator's moveAmount for blending.
+        animator.SetFloat("moveAmount", moveAmount, 0.2f, Time.deltaTime);
     }
 }

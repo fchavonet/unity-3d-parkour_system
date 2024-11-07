@@ -168,7 +168,7 @@ Camera:
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 20.784609
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
@@ -183,7 +183,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -275,7 +275,7 @@ MonoBehaviour:
   player: {fileID: 1941185065}
   rotationSpeed: 2
   distance: 5
-  minVerticalAngle: -20
+  minVerticalAngle: -10
   maxVerticalAngle: 45
   framingOffset: {x: 0, y: 1}
   invertX: 0
@@ -631,6 +631,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1941185065}
   - component: {fileID: 1941185064}
+  - component: {fileID: 1941185066}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -651,6 +652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraController: {fileID: 330585548}
+  animator: {fileID: 1941185066}
   moveSpeed: 5
   rotationSpeed: 500
 --- !u!4 &1941185065
@@ -669,6 +671,27 @@ Transform:
   - {fileID: 2029086340}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1941185066
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941185063}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 28c2185100d67424f88fec46de75e1ec, type: 3}
+  m_Controller: {fileID: 9100000, guid: 42c8a0958cda4405598f897f547a3349, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &2029086340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 28c2185100d67424f88fec46de75e1ec,
