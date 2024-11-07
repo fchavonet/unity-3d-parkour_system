@@ -34,7 +34,7 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // Update camera rotation and position.
+    // Update is called once per frame.
     private void Update()
     {
         // Set inversion values.
@@ -55,4 +55,7 @@ public class CameraController : MonoBehaviour
         // Apply the position and rotation to the camera.
         transform.SetPositionAndRotation(focusPosition - targetRotation * new Vector3(0, 0, distance), targetRotation);
     }
+
+    //
+    public Quaternion PlanarRotation => Quaternion.Euler(0, rotationY, 0);
 }
