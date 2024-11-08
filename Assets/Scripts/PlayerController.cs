@@ -6,7 +6,18 @@ public class PlayerController : MonoBehaviour
     // Camera controller reference.
     [Space(10)]
     public CameraController cameraController;
+    public CharacterController characterController;
     public Animator animator;
+
+    // Ground check settings.
+    [Space(10)]
+    public float groundCheckRadius = 0.2f;
+    public Vector3 groundCheckOffset;
+    public LayerMask groundLayer;
+
+    // Internal state for ground detection and vertical speed.
+    private bool isGrounded;
+    private float ySpeed;
 
     // Movement and rotation settings.
     [Space(10)]
@@ -17,7 +28,7 @@ public class PlayerController : MonoBehaviour
     private Quaternion targetRotation;
 
     // Update is called once per frame.
-    private void Update()
+    private void FixedUpdate()
     {
         // Get horizontal and vertical input.
         float horizontal = Input.GetAxis("Horizontal");
@@ -32,11 +43,29 @@ public class PlayerController : MonoBehaviour
         // Apply camera's planar rotation to movement.
         var moveDirection = cameraController.PlanarRotation * moveInput;
 
+        // Check if the player is on the ground.
+        GroundCheck();
+        if (isGrounded)
+        {
+            // Reset ySpeed to keep the player grounded.
+            ySpeed = -0.5f;
+        }
+        else
+        {
+            // Apply gravity.
+            ySpeed += Physics.gravity.y * Time.fixedDeltaTime;
+        }
+
+        // Calculate final velocity.
+        var velocity = moveDirection * moveSpeed;
+        velocity.y = ySpeed;
+
+        // Move the player.
+        characterController.Move(velocity * Time.fixedDeltaTime);
+
         // If there is movement input, move the player.
         if (moveAmount > 0)
         {
-            // Move the player.
-            transform.position += moveSpeed * Time.deltaTime * moveDirection;
             // Rotate the player to face movement direction.
             transform.rotation = Quaternion.LookRotation(moveDirection);
         }
@@ -46,5 +75,18 @@ public class PlayerController : MonoBehaviour
 
         // Update animator's moveAmount for blending.
         animator.SetFloat("moveAmount", moveAmount, 0.2f, Time.deltaTime);
+    }
+
+    // Check if the player is grounded.
+    private void GroundCheck()
+    {
+        isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
+    }
+
+    // Draws a gizmo in the editor to visualize the ground check area.
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 1, 0, 0.5f);
+        Gizmos.DrawSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius);
     }
 }
