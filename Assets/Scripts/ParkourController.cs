@@ -66,10 +66,40 @@ public class ParkourController : MonoBehaviour
             Debug.LogError("The parkour animation is wrong!");
         }
 
-        // Wait for the animation to complete.
-        yield return new WaitForSeconds(animState.length);
+        float timer = 0f;
+        while (timer <= animState.length)
+        {
+            timer += Time.deltaTime;
+
+            // Rotate the player towards the obstacle.
+            if (action.RotateToObstacle)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, action.TargetRotation, playerController.RotationSpeed * Time.deltaTime);
+            }
+
+            // Match target position if animation is correct and no transition is active.
+            if (animState.IsName(action.AnimationName) && !animator.IsInTransition(0))
+            {
+                MatchTarget(action);
+            }
+
+            yield return null;
+        }
 
         playerController.SetControl(true);
         inAction = false;
+    }
+
+    // Match target position for more accurate animation alignment.
+    void MatchTarget(ParkourAction action)
+    {
+        // Exit if already matching or in transition.
+        if (animator.isMatchingTarget || animator.IsInTransition(0))
+        {
+            return;
+        }
+
+        // Set target matching parameters.
+        animator.MatchTarget(action.MatchPos, transform.rotation, action.MatchBodyPart, new MatchTargetWeightMask(new Vector3(0, 1, 0), 0), action.MatchStartTime, action.MatchTargetTime);
     }
 }

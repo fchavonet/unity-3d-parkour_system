@@ -6,28 +6,60 @@ using UnityEngine;
 public class ParkourAction : ScriptableObject
 {
     [Space(10)]
-    // Animation name for this parkour action.
+    // Name of the animation for this action.
     public string animationName;
 
-    // Applicable height range for this action.
+    // Height range required for this action.
     public float minHeight;
     public float maxHeight;
+
+    // If true, player will rotate to face the obstacle.
+    public bool rotateToObstacle;
+
+    [Space(10)]
+    // Target matching settings.
+    public bool enableTargetMatching = true;
+    public AvatarTarget matchBodyPart;
+    public float matchStartTime;
+    public float matchTargetTime;
+
+    // Rotation towards the obstacle.
+    public Quaternion TargetRotation { get; set; }
+    // Position to match during action.
+    public Vector3 MatchPos { get; set; }
 
     // Method to check if this parkour action is possible based on obstacle height.
     public bool CheckIfPossible(ObstacleHitData hitData, Transform player)
     {
-        // Calculate height difference
+        // Calculate height difference.
         float height = hitData.heightHit.point.y - player.position.y;
 
         // Return false if height is outside min or max range.
-        if (height < minHeight || height > maxHeight)
+        if (height >= minHeight && height <= maxHeight)
         {
-            return false;
-        }
+            // Set rotation to face the obstacle if enabled.
+            if (rotateToObstacle)
+            {
+                TargetRotation = Quaternion.LookRotation(-hitData.forwardHit.normal);
+            }
 
-        // Action is possible if height is within range.
-        return true;
+            // Set match position if target matching is enabled.
+            if (enableTargetMatching)
+            {
+                MatchPos = hitData.heightHit.point;
+            }
+            return true;
+        }
+        return false;
     }
 
+    // Properties for accessing action settings.
     public string AnimationName => animationName;
+    public bool RotateToObstacle => rotateToObstacle;
+
+    // Target matching settings.
+    public bool EnableTargetMatching => enableTargetMatching;
+    public AvatarTarget MatchBodyPart => matchBodyPart;
+    public float MatchStartTime => matchStartTime;
+    public float MatchTargetTime => matchTargetTime;
 }
