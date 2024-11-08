@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
         if (moveAmount > 0)
         {
             // Rotate the player to face movement direction.
-            transform.rotation = Quaternion.LookRotation(moveDirection);
+            targetRotation = Quaternion.LookRotation(moveDirection);
         }
 
         // Smooth rotation to target.
