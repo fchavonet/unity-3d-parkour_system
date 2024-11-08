@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     // Camera controller reference.
     [Space(10)]
+    public Animator animator;
     public CameraController cameraController;
     public CharacterController characterController;
-    public Animator animator;
 
     // Ground check settings.
     [Space(10)]
@@ -15,14 +16,17 @@ public class PlayerController : MonoBehaviour
     public Vector3 groundCheckOffset;
     public LayerMask groundLayer;
 
-    // Internal state for ground detection and vertical speed.
-    private bool isGrounded;
-    private float ySpeed;
-
     // Movement and rotation settings.
     [Space(10)]
     public float moveSpeed = 5f;
     public float rotationSpeed = 500f;
+
+    // Player control state.
+    private bool hasControl = true;
+
+    // Internal state for ground detection and vertical speed.
+    private bool isGrounded;
+    private float ySpeed;
 
     // Target rotation for smoothing.
     private Quaternion targetRotation;
@@ -42,6 +46,12 @@ public class PlayerController : MonoBehaviour
 
         // Apply camera's planar rotation to movement.
         var moveDirection = cameraController.PlanarRotation * moveInput;
+
+        // Check if player control is disabled.
+        if (!hasControl)
+        {
+            return;
+        }
 
         // Check if the player is on the ground.
         GroundCheck();
@@ -75,6 +85,21 @@ public class PlayerController : MonoBehaviour
 
         // Update animator's moveAmount for blending.
         animator.SetFloat("moveAmount", moveAmount, 0.2f, Time.deltaTime);
+    }
+
+    // Set player control state.
+    public void SetControl(bool hasControl)
+    {
+        // Update control state and character controller activation.
+        this.hasControl = hasControl;
+        characterController.enabled = hasControl;
+
+        // Reset animator and rotation when control is disabled.
+        if (!hasControl)
+        {
+            animator.SetFloat("moveAmount", 0f);
+            targetRotation = transform.rotation;
+        }
     }
 
     // Check if the player is grounded.

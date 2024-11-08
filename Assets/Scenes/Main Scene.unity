@@ -1090,6 +1090,8 @@ GameObject:
   - component: {fileID: 1941185066}
   - component: {fileID: 1941185067}
   - component: {fileID: 1941185064}
+  - component: {fileID: 1941185068}
+  - component: {fileID: 1941185069}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1109,9 +1111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 978198840c33646f6b30f21ead7c2ee7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 1941185066}
   cameraController: {fileID: 330585548}
   characterController: {fileID: 1941185067}
-  animator: {fileID: 1941185066}
   groundCheckRadius: 0.2
   groundCheckOffset: {x: 0, y: 0.1, z: 0.1}
   groundLayer:
@@ -1148,7 +1150,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 42c8a0958cda4405598f897f547a3349, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -1182,6 +1184,39 @@ CharacterController:
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.895, z: 0.1}
+--- !u!114 &1941185068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941185063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d70697595a4fdd146be2ee5cf98e7bb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  forwardRayOffset: {x: 0, y: 0.25, z: 0}
+  forwardRayLength: 0.8
+  heightRayLength: 5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &1941185069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941185063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26eb02ac52f508b49b41b4be5fa71009, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parkourActions:
+  - {fileID: 11400000, guid: e92b3e9766d6f4e4ca346268f97a654b, type: 2}
+  - {fileID: 11400000, guid: 5f663ec1e53be19459375650fc3cbd2a, type: 2}
 --- !u!4 &2029086340 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 28c2185100d67424f88fec46de75e1ec,
