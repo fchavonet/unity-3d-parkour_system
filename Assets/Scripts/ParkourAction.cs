@@ -16,7 +16,7 @@ public class ParkourAction : ScriptableObject
     // If true, player will rotate to face the obstacle.
     public bool rotateToObstacle;
 
-    //
+    // Delay after the action is completed.
     public float postActionDelay;
 
     [Space(10)]

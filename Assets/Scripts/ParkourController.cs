@@ -86,7 +86,7 @@ public class ParkourController : MonoBehaviour
             yield return null;
         }
 
-        //        
+        // Wait for a delay after the action is completed.        
         yield return new WaitForSeconds(action.PostActionDelay);
 
         playerController.SetControl(true);
