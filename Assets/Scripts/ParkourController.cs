@@ -56,6 +56,7 @@ public class ParkourController : MonoBehaviour
         playerController.SetControl(false);
 
         // Start the parkour animation.
+        animator.SetBool("mirrorAction", action.Mirror);
         animator.CrossFade(action.animationName, 0.2f);
         yield return null;
 

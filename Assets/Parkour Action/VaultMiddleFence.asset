@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f3ad0187ae5b49549fd7f260a5bb6a4, type: 3}
-  m_Name: VaultFence
+  m_Script: {fileID: 11500000, guid: f142ad31d4be86d4d87f6204ade698c5, type: 3}
+  m_Name: VaultMiddleFence
   m_EditorClassIdentifier: 
-  animationName: VaultFence
-  obstacleTag: Fence
-  minHeight: 0.8
-  maxHeight: 1.2
+  animationName: VaultMiddleFence
+  obstacleTag: MiddleFence
+  minHeight: 0.5
+  maxHeight: 1
   rotateToObstacle: 1
   postActionDelay: 0
-  enableTargetMatching: 1
-  matchBodyPart: 4
-  matchStartTime: 0.12
-  matchTargetTime: 0.32
+  enableTargetMatching: 0
+  matchBodyPart: 3
+  matchStartTime: 0
+  matchTargetTime: 0
   matchPositionWeight: {x: 0, y: 1, z: 1}

@@ -32,9 +32,11 @@ public class ParkourAction : ScriptableObject
     public Quaternion TargetRotation { get; set; }
     // Position to match during action.
     public Vector3 MatchPos { get; set; }
+    //
+    public bool Mirror { get; set; }
 
     // Method to check if this parkour action is possible based on obstacle height.
-    public bool CheckIfPossible(ObstacleHitData hitData, Transform player)
+    public virtual bool CheckIfPossible(ObstacleHitData hitData, Transform player)
     {
         // Verify if the obstacle has the correct tag; if not, return false.
         if (!string.IsNullOrEmpty(obstacleTag) && !hitData.forwardHit.transform.CompareTag(obstacleTag))

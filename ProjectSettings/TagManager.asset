@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Fence
+  - MiddleFence
+  - LargeFence
   layers:
   - Default
   - TransparentFX
