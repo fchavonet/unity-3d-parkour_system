@@ -16,12 +16,16 @@ public class ParkourAction : ScriptableObject
     // If true, player will rotate to face the obstacle.
     public bool rotateToObstacle;
 
+    //
+    public float postActionDelay;
+
     [Space(10)]
     // Target matching settings.
     public bool enableTargetMatching = true;
     public AvatarTarget matchBodyPart;
     public float matchStartTime;
     public float matchTargetTime;
+    public Vector3 matchPositionWeight = new(0, 1, 0);
 
     // Rotation towards the obstacle.
     public Quaternion TargetRotation { get; set; }
@@ -56,10 +60,12 @@ public class ParkourAction : ScriptableObject
     // Properties for accessing action settings.
     public string AnimationName => animationName;
     public bool RotateToObstacle => rotateToObstacle;
+    public float PostActionDelay => postActionDelay;
 
     // Target matching settings.
     public bool EnableTargetMatching => enableTargetMatching;
     public AvatarTarget MatchBodyPart => matchBodyPart;
     public float MatchStartTime => matchStartTime;
     public float MatchTargetTime => matchTargetTime;
+    public Vector3 MatchPositionWeight => matchPositionWeight;
 }
