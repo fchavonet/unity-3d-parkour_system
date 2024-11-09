@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f142ad31d4be86d4d87f6204ade698c5, type: 3}
-  m_Name: ClimbUp
+  m_Name: VaultFence
   m_EditorClassIdentifier: 
-  animationName: ClimbUp
-  obstacleTag: 
-  minHeight: 1.5
-  maxHeight: 2.5
+  animationName: VaultFence
+  obstacleTag: Fence
+  minHeight: 0.8
+  maxHeight: 1.2
   rotateToObstacle: 1
-  postActionDelay: 0.5
+  postActionDelay: 0
   enableTargetMatching: 1
-  matchBodyPart: 5
-  matchStartTime: 0.08
-  matchTargetTime: 0.28
+  matchBodyPart: 4
+  matchStartTime: 0.12
+  matchTargetTime: 0.32
   matchPositionWeight: {x: 0, y: 1, z: 1}

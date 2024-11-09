@@ -8,6 +8,7 @@ public class ParkourAction : ScriptableObject
     [Space(10)]
     // Name of the animation for this action.
     public string animationName;
+    public string obstacleTag;
 
     // Height range required for this action.
     public float minHeight;
@@ -35,6 +36,12 @@ public class ParkourAction : ScriptableObject
     // Method to check if this parkour action is possible based on obstacle height.
     public bool CheckIfPossible(ObstacleHitData hitData, Transform player)
     {
+        // Verify if the obstacle has the correct tag; if not, return false.
+        if (!string.IsNullOrEmpty(obstacleTag) && !hitData.forwardHit.transform.CompareTag(obstacleTag))
+        {
+            return false;
+        }
+
         // Calculate height difference.
         float height = hitData.heightHit.point.y - player.position.y;
 

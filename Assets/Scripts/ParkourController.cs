@@ -83,6 +83,12 @@ public class ParkourController : MonoBehaviour
                 MatchTarget(action);
             }
 
+            // Break out of the loop if a transition occurs and a minimum time has passed.
+            if (animator.IsInTransition(0) && timer > 0.5f)
+            {
+                break;
+            }
+
             yield return null;
         }
 
