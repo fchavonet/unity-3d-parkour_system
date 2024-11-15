@@ -12,6 +12,7 @@ public class ParkourController : MonoBehaviour
     [Space(10)]
     // List of possible parkour actions.
     public List<ParkourAction> parkourActions;
+    public ParkourAction jumpDownAction;
 
     // State flag to check if a parkour action is in progress.
     private bool inAction;
@@ -27,11 +28,11 @@ public class ParkourController : MonoBehaviour
     // Update method to check for parkour input and initiate actions.
     private void Update()
     {
+        var hitData = environmentScanner.ObstacleCheck();
+
         // If the jump button is pressed and no action is currently active.
         if (Input.GetButton("Jump") && !inAction)
         {
-            var hitData = environmentScanner.ObstacleCheck();
-
             // If an obstacle is detected in front.
             if (hitData.forwardHitFound)
             {
@@ -45,6 +46,17 @@ public class ParkourController : MonoBehaviour
                         break;
                     }
                 }
+            }
+        }
+
+        // Check if the player is on a ledge, not performing an action, and there is no obstacle ahead.
+        if (playerController.IsOnLedge && !inAction && !hitData.forwardHitFound && Input.GetButton("Jump"))
+        {
+            if (playerController.LedgeData.angle <= 50)
+            {
+                // Perform a jump down action if the ledge angle is within the threshold.
+                playerController.IsOnLedge = false;
+                StartCoroutine(DoParkourAction(jumpDownAction));
             }
         }
     }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnvironmentScanner : MonoBehaviour
@@ -7,6 +9,8 @@ public class EnvironmentScanner : MonoBehaviour
     public Vector3 forwardRayOffset = new(0, 0.25f, 0);
     public float forwardRayLength = 0.8f;
     public float heightRayLength = 5;
+    public float ledgeRayLength = 10;
+    public float ledgeHeightThreshold = 0.75f;
     public LayerMask obstacleLayer;
 
     public ObstacleHitData ObstacleCheck()
@@ -35,6 +39,54 @@ public class EnvironmentScanner : MonoBehaviour
 
         return hitData;
     }
+
+    // Checks if there is a ledge in the specified movement direction and gathers information about it.
+    public bool LedgeCheck(Vector3 moveDirection, out LedgeData ledgeData)
+    {
+        ledgeData = new LedgeData();
+
+        // Return false if no movement direction is provided.
+        if (moveDirection == Vector3.zero)
+        {
+            return false;
+        }
+
+        // Calculate the origin for the ledge detection rays.
+        float originOffest = 0.5f;
+        var origin = transform.position + moveDirection * originOffest + Vector3.up;
+
+        // Perform multiple downward raycasts to detect ledge positions.
+        if (PhysicsUtilities.ThreeRaycasts(origin, Vector3.down, 0.25f, transform, out List<RaycastHit> hits, ledgeRayLength, obstacleLayer, true))
+        {
+            // Filter hits based on height threshold.
+            var validHits = hits.Where(h => transform.position.y - h.point.y > ledgeHeightThreshold).ToList();
+
+            if (validHits.Count > 0)
+            {
+                // Set up a ray from the surface point back to the character.
+                var surfaceRayOrigin = validHits[0].point;
+                surfaceRayOrigin.y = transform.position.y - 0.1f;
+
+                // Check for a surface within a short distance.
+                if (Physics.Raycast(surfaceRayOrigin, transform.position - surfaceRayOrigin, out RaycastHit surfaceHit, 2, obstacleLayer))
+                {
+                    Debug.DrawLine(surfaceRayOrigin, transform.position, Color.cyan);
+
+                    float height = transform.position.y - validHits[0].point.y;
+
+                    // Calculate the ledge angle and store the data.
+                    ledgeData.angle = Vector3.Angle(transform.forward, surfaceHit.normal);
+                    ledgeData.height = height;
+                    ledgeData.surfaceHit = surfaceHit;
+
+                    return true;
+
+                }
+            }
+        }
+
+        return false;
+    }
 }
 
 // Struct to store data about ray hits for obstacle detection.
@@ -44,4 +96,12 @@ public struct ObstacleHitData
     public bool heightHitFound;
     public RaycastHit forwardHit;
     public RaycastHit heightHit;
+}
+
+// Struct to store data about detected ledges.
+public struct LedgeData
+{
+    public float height;
+    public float angle;
+    public RaycastHit surfaceHit;
 }
