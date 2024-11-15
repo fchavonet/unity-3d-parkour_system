@@ -125,6 +125,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //
+    public bool HasControl
+    {
+        get => hasControl;
+        set => hasControl = value;
+    }
+
     // Check if the player is grounded.
     private void GroundCheck()
     {

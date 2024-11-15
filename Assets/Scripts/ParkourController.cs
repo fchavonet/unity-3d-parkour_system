@@ -13,6 +13,7 @@ public class ParkourController : MonoBehaviour
     // List of possible parkour actions.
     public List<ParkourAction> parkourActions;
     public ParkourAction jumpDownAction;
+    public float autoDropHeightLimit = 1;
 
     // State flag to check if a parkour action is in progress.
     private bool inAction;
@@ -50,9 +51,17 @@ public class ParkourController : MonoBehaviour
         }
 
         // Check if the player is on a ledge, not performing an action, and there is no obstacle ahead.
-        if (playerController.IsOnLedge && !inAction && !hitData.forwardHitFound && Input.GetButton("Jump"))
+        if (playerController.IsOnLedge && !inAction && !hitData.forwardHitFound)
         {
-            if (playerController.LedgeData.angle <= 50)
+            bool shouldJump = true;
+
+            // Prevents auto-jumping if the ledge is too high and the Jump button is not pressed.
+            if (playerController.LedgeData.height > autoDropHeightLimit && !Input.GetButton("Jump"))
+            {
+                shouldJump = false;
+            }
+
+            if (shouldJump && playerController.LedgeData.angle <= 50)
             {
                 // Perform a jump down action if the ledge angle is within the threshold.
                 playerController.IsOnLedge = false;
