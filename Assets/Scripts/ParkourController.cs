@@ -15,9 +15,6 @@ public class ParkourController : MonoBehaviour
     public ParkourAction jumpDownAction;
     public float autoDropHeightLimit = 1;
 
-    // State flag to check if a parkour action is in progress.
-    private bool inAction;
-
     // Initialize component references.
     private void Awake()
     {
@@ -32,7 +29,7 @@ public class ParkourController : MonoBehaviour
         var hitData = environmentScanner.ObstacleCheck();
 
         // If the jump button is pressed and no action is currently active.
-        if (Input.GetButton("Jump") && !inAction)
+        if (Input.GetButton("Jump") && !playerController.InAction)
         {
             // If an obstacle is detected in front.
             if (hitData.forwardHitFound)
@@ -51,7 +48,7 @@ public class ParkourController : MonoBehaviour
         }
 
         // Check if the player is on a ledge, not performing an action, and there is no obstacle ahead.
-        if (playerController.IsOnLedge && !inAction && !hitData.forwardHitFound)
+        if (playerController.IsOnLedge && !playerController.InAction && !hitData.forwardHitFound)
         {
             bool shouldJump = true;
 
@@ -73,52 +70,28 @@ public class ParkourController : MonoBehaviour
     // Coroutine to execute a parkour action.
     private IEnumerator DoParkourAction(ParkourAction action)
     {
-        inAction = true;
+        // Disable player control during the action.
         playerController.SetControl(false);
 
-        // Start the parkour animation.
-        animator.SetBool("mirrorAction", action.Mirror);
-        animator.CrossFade(action.animationName, 0.2f);
-        yield return null;
-
-        // Check if the correct animation has started
-        var animState = animator.GetNextAnimatorStateInfo(0);
-        if (!animState.IsName(action.animationName))
+        // Prepare matching parameters if enabled for the action.
+        MatchTargetParameters matchParams = null;
+        if (action.EnableTargetMatching)
         {
-            Debug.LogError("The parkour animation is wrong!");
+            matchParams = new MatchTargetParameters()
+            {
+                position = action.MatchPos,
+                bodyPart = action.MatchBodyPart,
+                positionWeight = action.MatchPositionWeight,
+                startTime = action.MatchStartTime,
+                targetTime = action.MatchTargetTime
+            };
         }
 
-        float timer = 0f;
-        while (timer <= animState.length)
-        {
-            timer += Time.deltaTime;
+        // Execute the parkour action animation.
+        yield return playerController.DoAction(action.AnimationName, matchParams, action.TargetRotation, action.RotateToObstacle, action.PostActionDelay, action.Mirror);
 
-            // Rotate the player towards the obstacle.
-            if (action.RotateToObstacle)
-            {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, action.TargetRotation, playerController.RotationSpeed * Time.deltaTime);
-            }
-
-            // Match target position if animation is correct and no transition is active.
-            if (animState.IsName(action.AnimationName) && !animator.IsInTransition(0))
-            {
-                MatchTarget(action);
-            }
-
-            // Break out of the loop if a transition occurs and a minimum time has passed.
-            if (animator.IsInTransition(0) && timer > 0.5f)
-            {
-                break;
-            }
-
-            yield return null;
-        }
-
-        // Wait for a delay after the action is completed.        
-        yield return new WaitForSeconds(action.PostActionDelay);
-
+        // Restore player control after the action.
         playerController.SetControl(true);
-        inAction = false;
     }
 
     // Match target position for more accurate animation alignment.

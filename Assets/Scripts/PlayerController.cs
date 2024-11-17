@@ -1,8 +1,9 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    //
+    // Core player components.
     [Space(10)]
     public Animator animator;
     public CameraController cameraController;
@@ -34,6 +35,9 @@ public class PlayerController : MonoBehaviour
 
     // Target rotation for smoothing.
     private Quaternion targetRotation;
+
+    // Properties to tracks if the player is performing an action.
+    public bool InAction { get; private set; }
 
     // Properties to track if the player is on a ledge and store ledge data.
     public bool IsOnLedge { get; set; }
@@ -110,6 +114,68 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
+    // Coroutine to execute an action.
+    public IEnumerator DoAction(string animationName, MatchTargetParameters matchParams, Quaternion targetRotation, bool rotate = false, float postDelay = 0f, bool mirror = false)
+    {
+        InAction = true;
+
+        // Start the parkour animation.
+        animator.SetBool("mirrorAction", mirror);
+        animator.CrossFade(animationName, 0.2f);
+        yield return null;
+
+        // Check if the correct animation has started
+        var animState = animator.GetNextAnimatorStateInfo(0);
+        if (!animState.IsName(animationName))
+        {
+            Debug.LogError("The parkour animation is wrong!");
+        }
+
+        float timer = 0f;
+        while (timer <= animState.length)
+        {
+            timer += Time.deltaTime;
+
+            // Rotate the player towards the obstacle.
+            if (rotate)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            }
+
+            // Match target position if animation is correct and no transition is active.
+            if (matchParams != null && !animator.IsInTransition(0))
+            {
+                MatchTarget(matchParams);
+            }
+
+            // Break out of the loop if a transition occurs and a minimum time has passed.
+            if (animator.IsInTransition(0) && timer > 0.5f)
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        // Wait for a delay after the action is completed.        
+        yield return new WaitForSeconds(postDelay);
+
+        InAction = false;
+    }
+
+    // Match target position for more accurate animation alignment.
+    void MatchTarget(MatchTargetParameters matchParams)
+    {
+        // Exit if already matching or in transition.
+        if (animator.isMatchingTarget || animator.IsInTransition(0))
+        {
+            return;
+        }
+
+        // Set target matching parameters.
+        animator.MatchTarget(matchParams.position, transform.rotation, matchParams.bodyPart, new MatchTargetWeightMask(matchParams.positionWeight, 0), matchParams.startTime, matchParams.targetTime);
+    }
+
     // Set player control state.
     public void SetControl(bool hasControl)
     {
@@ -125,7 +191,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //
+    // Indicates if the player has movement control.
     public bool HasControl
     {
         get => hasControl;
@@ -145,10 +211,9 @@ public class PlayerController : MonoBehaviour
         float signedAngle = Vector3.SignedAngle(LedgeData.surfaceHit.normal, desiredMoveDirection, Vector3.up);
         float angle = Mathf.Abs(signedAngle);
 
-        //
+        // Prevents the player from moving backward off the ledge.
         if (Vector3.Angle(desiredMoveDirection, transform.forward) >= 80)
         {
-            // Stop movement if the player tries to move backwards off the ledge.
             velocity = Vector3.zero;
             return;
         }
@@ -178,4 +243,14 @@ public class PlayerController : MonoBehaviour
     }
 
     public float RotationSpeed => rotationSpeed;
+}
+
+// Parameters for matching position during animations.
+public class MatchTargetParameters
+{
+    public Vector3 position;
+    public AvatarTarget bodyPart;
+    public Vector3 positionWeight;
+    public float startTime;
+    public float targetTime;
 }
